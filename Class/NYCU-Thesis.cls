@@ -196,11 +196,13 @@
 
 % 研究生中英文姓名
 \def\zhStudentName#1{\gdef\@zhStudentName{#1}}
-\def\enStudentName#1{\gdef\@enStudentName{#1}}
+\def\enStudentFirstName#1{\gdef\@enStudentFirstName{#1}}
+\def\enStudentLastName#1{\gdef\@enStudentLastName{#1}}
 
 % 指導教授中英文姓名
 \def\zhAdvisorName#1{\gdef\@zhAdvisorName{#1}}
-\def\enAdvisorName#1{\gdef\@enAdvisorName{#1}}
+\def\enAdvisorFirstName#1{\gdef\@enAdvisorFirstName{#1}}
+\def\enAdvisorLastName#1{\gdef\@enAdvisorLastName{#1}}
 
 % 中英文大學名稱
 \def\zhUnivName#1{\gdef\@zhUnivName{#1}}
@@ -353,9 +355,9 @@
                 \vfill
             \fi
 
-            \fontsize{18}{18}{\selectfont 研究生：\@zhStudentName（\@enStudentName）} \\
+            \fontsize{18}{18}{\selectfont 研究生：\@zhStudentName（\@enStudentLastName, \@enStudentFirstName）} \\
             \vspace{1\baselineskip}
-            \fontsize{18}{18}{\selectfont 指導教授：\@zhAdvisorName（\@enAdvisorName）} \\
+            \fontsize{18}{18}{\selectfont 指導教授：\@zhAdvisorName（\@enAdvisorLastName, \@enAdvisorFirstName）} \\
 
             \vfill
 
@@ -392,8 +394,8 @@
         \renewcommand{\arraystretch}{1.5}
         \fontsize{14}{14}{\selectfont
             \begin{tabularx}{\textwidth}{@{}p{2.5cm}@{}Xl@{}}
-                \makebox[2.5cm][s]{研究生：}  & \@zhStudentName \hfill Student：     & \@enStudentName      \\
-                \makebox[2.5cm][s]{指導教授：} & \@zhAdvisorName\ 博士 \hfill Advisor： & Dr.\ \@enAdvisorName \\
+                \makebox[2.5cm][s]{研究生：}  & \@zhStudentName \hfill Student：     & \@enStudentFirstName\ \@enStudentLastName \\
+                \makebox[2.5cm][s]{指導教授：} & \@zhAdvisorName\ 博士 \hfill Advisor： & Dr.\ \@enAdvisorFirstName\ \@enAdvisorLastName \\
             \end{tabularx}
         }
         \renewcommand{\arraystretch}{1}
