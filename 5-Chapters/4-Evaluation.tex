@@ -2,68 +2,96 @@
 % 實驗設計分析
 %----------------------------------------------------------------------
 
-\chapter{實驗設計分析\small{（如何插入表格和圖片）}}\label{sec:evalutaion}
+\chapter{結果}\label{sec:evalutaion}
 
-\section{實驗設計}
+\section{基礎模型原始特徵效能}
 
-圖\ref{fig:figexample}。圖\ref{fig:figexample2}。圖\ref{fig:figexample3}。表\ref{tab:tabexample}。表\ref{tab:tabexample2}。表\ref{tab:tabexample3}。表\ref{tab:tabexample4}。表\ref{tab:tabexample5}。話雖如此，需要考慮周詳實驗設計的影響及因應對策。鄒韜奮曾講過，友誼是天地間最可寶貴的東西，深摯的友誼是人生最大的一種安慰。這啟發了我。我們一般認為，抓住了問題的關鍵，其他一切則會迎刃而解。對於一般人來說，實驗設計究竟象徵著什麼呢？儘管實驗設計看似不顯眼，卻佔據了我的腦海。茅盾講過一段深奧的話，過去的，讓它過去，永遠不要回顧; 未來的，等來了時再說，不要空想; 我們只抓住了現在，用我們現在的理想，做我們所應該做的。這段話讓我所有的疑惑頓時豁然開朗。一般來講，我們都必須務必慎重的考慮考慮。
 
-\begin{table}[ht]
-    \centering
-    \renewcommand{\arraystretch}{1.2}
+\label{sec:base_models}
+本節主要是想探討兩種主流病理基礎模型架構 Transformer 與卷積神經網路（CNN）在生存預測任務中的表現差異。為此，我們分別選擇 CONCH（採用 Vision Transformer-B, ViT-B）與 RetCCL（採用 ResNet-50）作為代表模型，並在單一放大倍率輸入下進行比較。實驗中分別以 5x、10x、20x、40x 四種解析度輸入進行模型訓練與評估，並以 C-index 作為效能指標，數值越高表示模型排序風險的能力越佳。比較結果如表 \ref{tab:single_magnification_results} 所示。
 
-    \begin{tabular}{ c | l l }
+從結果可觀察到，CONCH 模型在所有放大倍率下皆表現優於 RetCCL，且整體表現穩定，C-index 值落在 0.63 至 0.65 之間，顯示其對組織特徵的表徵能力具備良好的一致性。
 
-        \diagbox[innerwidth=6em,trim=l]{$\alpha$}{$\beta$} & \multicolumn{2}{c}{這一格透過\textbackslash multicolumn可以跨2欄並且置中}                   \\
-        \hline\hline
-        \multirow{2}{*}{跨列A}                               & 這邊2欄的內容會靠左對齊                                                 & 而且不會平均分配        \\\cline{2-3}
-                                                           & 要平均分配的話                                                      & 請看下面的另外一個範例     \\\hline
-        \multirow{5}{*}{跨列B}                               & $\alpha  $                                                   & $\beta  $       \\\cline{2-3}
-                                                           & $\gamma  $                                                   & $\delta  $      \\\cline{2-3}
-                                                           & $\epsilon  $                                                 & $\varepsilon  $ \\\cline{2-3}
-                                                           & $\zeta  $                                                    & $\eta  $        \\\cline{2-3}
-                                                           & $\theta  $                                                   & $\vartheta $    \\\hline
-    \end{tabular}
+CONCH 與 RetCCL 在模型設計上具有根本性的差異。CONCH 採用 Vision Transformer-B（ViT-B）架構，透過全域自注意力機制建構影像中長距離區域間的關聯性，有助於捕捉跨組織區域的整體形態與語義特徵；而 RetCCL 則以傳統的 ResNet-50 為骨幹，主要透過卷積運算提取局部紋理與邊界資訊，其特徵建構能力偏重於區域性。此架構差異正好反映於效能表現上，Transformer 架構於不同倍率下皆能維持穩定且優異的生存預測結果，顯示其具備較佳的尺度適應性與全局理解能力。
 
-    \renewcommand{\arraystretch}{1}
+相對而言，RetCCL 模型在低倍率下表現明顯較差（5x 僅 0.493），推測其缺乏宏觀結構建模能力，使其難以從低解析度影像中擷取預後關鍵特徵。儘管在高倍率（20x、40x）下有所改善（C-index 提升至 0.57），但整體效能仍不及 Transformer 架構，顯示其泛化能力相對受限。
 
-    \caption{範例表格A}
-    \label{tab:tabexample}
-\end{table}
+綜合來看，本實驗驗證了 Transformer 架構相較於 CNN 更適合處理病理影像中的跨區域資訊整合需求，並能在不同解析度下穩健產生預後相關特徵，具有潛力作為後續多倍率與多模態整合之核心模型。
 
 \begin{table}[ht]
-    \centering
-    \renewcommand{\arraystretch}{1.2}
-
-    \begin{tabularx}{\textwidth}{l|l|X}
-        \hline
-        $\iota $   & $\kappa $ & 這一個欄位會自動被撐開到滿足表格總寬度 \\
-        \hline\hline
-        $\lambda $ & $\mu $    & $\nu $              \\
-        $\xi $     & $o $      & $\pi $              \\
-        \hline
-    \end{tabularx}
-
-    \caption{使用tabularx可以指定表格總寬度，搭配它內建的Column Type "X"，可以撐開格子。}
-    \label{tab:tabexample2}
+\centering
+\begin{tabular}{lcc}
+\hline
+\textbf{Magnification} & \textbf{CONCH} & \textbf{RetCCL} \\
+\hline
+5x  & 0.636 & 0.493 \\
+10x & 0.632 & 0.543 \\
+20x & 0.639 & 0.565 \\
+40x & 0.641 & 0.570 \\
+\hline
+\end{tabular}
+\caption{CONCH 與 RetCCL 模型於不同單一放大倍率下的生存預測效能（C-index）}
+\label{tab:single_magnification_results}
 \end{table}
+
+
+\section{多倍率融合加強基礎模型效能}
+
+而為了進一步探討在生存預測任務中，加入多放大倍率影像（multi-scale fusion）是否能有效提升相較於單一放大倍率輸入的預測效能。這裡針對兩種基礎模型（CONCH 與 RetCCL），比較其於單倍率（5x、10x、20x、40x）與雙倍率組合（如 5x+20x、5x+40x 等）下的 C-index 表現，結果彙整於表 \ref{tab:multi_scale_comparison}。
+
+從結果觀察可知，CONCH 模型在進行多倍率組合後，其預測效能相較單一倍率均有提升，特別是在「5x+20x」中達到最高 C-index 值 0.662，優於其單一倍率 0.636（5x）。此結果顯示，多尺度融合可有效結合低倍率的宏觀結構資訊與高倍率的細部組織特徵，強化模型對病理變化的判讀能力。
+
+相較之下，RetCCL 模型在進行多倍率融合後於「5x+40x」組合下達到其最佳表現（C-index = 0.629），整體提升幅度相較 CONCH 表現更加優秀，且與單倍率下的5倍（0.493）提升也更為明顯。
+
+整體而言，實驗結果顯示相較於僅使用單一放大倍率，多倍率融合在 CONCH 和 RetCCL 模型中具有明顯的效能提升，尤其在 C-index 指標上展現出穩定且可重複的優勢，驗證了多尺度資訊對於病理影像生存預測任務的貢獻與重要性。
 
 \begin{table}[ht]
-    \centering
-    \renewcommand{\arraystretch}{1.2}
-
-    \begin{tabular}{ c | c | C{10em}}
-        $\varpi $   & $\rho  $      & 這是一個內容有點多的格子，它會自動換行而且置中 \\ \hline\hline
-        $\varrho  $ & $\sigma  $    & $\varsigma  $           \\\hline
-        $\tau  $    & $\upsilon   $ & $\phi   $               \\\hline
-        $\varphi $  & $\chi   $     & $\psi   $               \\\hline
-    \end{tabular}
-
-    \renewcommand{\arraystretch}{1}
-
-    \caption{使用tabular，然後使用模板提供的New Column Type "C"，可以指定格子寬度然後自動換行並且置中}
-    \label{tab:tabexample3}
+\centering
+\begin{tabular}{lcccc}
+\hline
+\textbf{Magnification} & \textbf{CONCH} & \textbf{RetCCL} \\
+\hline
+5x & 0.636 & 0.493 \\
+10x & 0.632 & 0.544 \\
+20x & 0.639 & 0.565 \\
+40x & 0.641 & 0.570 \\
+5x 10x & 0.642 & 0.570 \\
+5x, 20x & 0.662 & 0.598 \\
+5x, 40x & 0.659 & 0.629 \\
+10x, 20x & 0.633 & 0.607 \\
+20x, 40x & 0.659 & 0.603 \\
+\hline
+\end{tabular}
+\caption{不同基礎模型與多尺度組合下的生存預測效能（C-index）}
+\label{tab:multi_scale_comparison}
 \end{table}
+
+
+\section{多模態融合加強基礎模型效能}
+
+本節探討多模態特徵融合對生存預測模型效能的提升效果，並進一步驗證不同基礎模型在與細胞層級特徵整合後的表現差異。由於測試的模型皆以20x放大倍率進行預訓練，為保持比較的一致性，因此本實驗以 20x 放大倍率之病理影像作為輸入，進行各模型的訓練與評估。具體而言，將兩種病理影像基礎模型（CONCH 與 RetCCL）所萃取的特徵，分別與細胞結構資訊來源 HoverNet 所提取的核實體特徵進行融合，形成多模態輸入架構。模型效能以 C-index 作為評估指標，實驗結果如表 \ref{tab:multi_modal_results} 所示。
+
+從結果可觀察到，將 HoverNet 細胞層級特徵與基礎模型進行融合後，皆可顯著提升原模型的預測效能。以 CONCH 為例，單獨使用其特徵時 C-index 為 0.639，經與 HoverNet 整合後提升至 0.655，顯示細胞層級資訊對於提升模型區分高低風險樣本的能力具有實質幫助。類似地，RetCCL 模型亦由原本的 0.565 提升至 0.643，展現出融合後的明顯改善。
+
+此外，與 HoverNet 單獨使用時的表現（C-index = 0.611）相比，融合後的模型皆達到更高準確度，進一步證實來自不同層次的病理資訊具備互補性，能強化模型對腫瘤異質性與病理特徵的整體理解。
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{lc}
+\hline
+\textbf{Encoder} & \textbf{C-index} \\  % ← 這裡要有 \\ 才能接 \hline
+\hline
+CONCH & 0.639 \\
+RetCCL & 0.565 \\
+HoverNet & 0.611 \\
+CONCH + HoverNet & 0.655 \\
+RetCCL + HoverNet & 0.643 \\
+\hline
+\end{tabular}
+\caption{多模態融合下不同模型組合於20x放大倍率的生存預測效能（C-index）}
+\label{tab:multi_modal_results}
+\end{table}
+
 
 \begin{figure}[hpbt]
     \centering
